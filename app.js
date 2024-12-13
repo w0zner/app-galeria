@@ -18,8 +18,10 @@ app.use((req, res, next) => {
 
 /* app.get('*', (req, res) => { 
     res.status(200).send({message: 'Welcome to app'})
-}) */
+})  */
+const prefix = '/galery/api'
+
 //rutas
-app.use('/usuarios', require('./routes/usuario'))
+app.use(prefix + '/usuarios', require('./routes/usuario'))
 
 module.exports=app

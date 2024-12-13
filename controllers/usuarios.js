@@ -17,6 +17,33 @@ const create = async (req, res) => {
     }
 }
 
+const login = async (req, res) => {
+    try {
+        const {usuario, password} = req.body
+
+        const existeUsuario = await Usuario.findOne({usuario})
+        if(!existeUsuario) {
+            return res.status(404).json({
+                message: 'Usuario no encontrado'
+            })
+        }
+
+        if(!existeUsuario.activo) {
+            return res.status(404).json({
+                message: 'Usuario se encuentra inactivo'
+            })
+        }
+        
+        res.status(200).json({
+            message: 'Usuario logueado'
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error inesperado'
+        })
+    }
+}
+
 const list = (req, res) => {
     try {
         res.status(200).json({
@@ -27,4 +54,4 @@ const list = (req, res) => {
     }
 }
 
-module.exports = {create, list}
+module.exports = {create, list, login}

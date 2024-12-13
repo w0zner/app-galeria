@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const usuario = require('../controllers/usuarios');
 
-router.get('/list', usuario.list);
-router.post('/create', usuario.create);
+router.post('/login', usuario.login);
+router.get('/listar', usuario.list);
+router.post('/crear', usuario.create);
 
 module.exports = router;
