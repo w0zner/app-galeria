@@ -23,5 +23,6 @@ const prefix = '/galery/api'
 
 //rutas
 app.use(prefix + '/usuarios', require('./routes/usuario'))
+app.use(prefix + '/fotografias', require('./routes/fotografia'))
 
 module.exports=app
