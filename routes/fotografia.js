@@ -11,5 +11,7 @@ router.post('/guardar', fotografias.create);
 router.post('/actualizar/:id', fotografias.update);
 router.post('/subir-foto/:id', md_upload, fotografias.uploadFotografia)
 router.get('/get-foto/:fotografia/:thumb', md_upload, fotografias.getFotografia)
+router.get('/', fotografias.getAll);
+router.get('/admin', fotografias.getAllAdmin);
 
 module.exports = router;

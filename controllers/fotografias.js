@@ -155,4 +155,34 @@ const getFotografia = (req, res) => {
     }
 }
 
-module.exports = {create, update, uploadFotografia, getFotografia}
+const getAll = async (req, res) => {
+    try {
+        const fotografias = await Fotografias.find({activo: true}, 'nombre descripcion imagen numero autor activo usuario_creacion createdAt updatedAt').sort({numero: 1})
+        console.log(fotografias)
+        res.status(200).send({
+            fotografias
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado'
+        })
+    }
+}
+
+const getAllAdmin = async (req, res) => {
+    try {
+        const fotografias = await Fotografias.find({}, 'nombre descripcion imagen numero autor activo usuario_creacion createdAt updatedAt').sort({numero: 1})
+        console.log(fotografias)
+        res.status(200).send({
+            fotografias
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado'
+        })
+    }
+}
+
+module.exports = {create, update, uploadFotografia, getFotografia,getAll, getAllAdmin}
