@@ -58,7 +58,12 @@ const login = async (req, res) => {
 
         let token = jwt.createToken(existeUsuario)
 
-        if(req.body.token) {
+        res.status(200).json({
+            usuario: existeUsuario,
+            token
+        })
+
+        /* if(req.body.token) {
             res.status(200).json({
                 token   
             })
@@ -66,11 +71,51 @@ const login = async (req, res) => {
             res.status(200).json({
                 usuario: existeUsuario,
             })
-        }
+        } */
     } catch (error) {
         console.error(error)
         res.status(500).json({
             message: 'Error inesperado',
+        })
+    }
+}
+
+const refreshToken = async (req, res) => {
+    try {
+        const {usuario, password} = req.body
+
+        const existeUsuario = await Usuario.findOne({usuario})
+        if(!existeUsuario) {
+            return res.status(404).json({
+                message: 'Usuario o contraseña incorrecta'
+            })
+        }
+
+        const passwordDB = bcrypt.compare(password, existeUsuario.password)
+        if(!passwordDB) {
+            console.log(password);
+            console.log(existeUsuario.password);
+            return res.status(404).json({
+                message: 'Usuario o contraseña incorrecta'
+            })
+        }
+
+        if(!existeUsuario.activo) {
+            return res.status(404).json({
+                message: 'Usuario se encuentra inactivo'
+            })
+        }
+
+        let token = jwt.createToken(existeUsuario)
+
+        res.status(200).json({
+            usuario: existeUsuario,
+            token
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado en refresh token',
         })
     }
 }
@@ -85,4 +130,4 @@ const list = (req, res) => {
     }
 }
 
-module.exports = {create, list, login}
+module.exports = {create, list, login, refreshToken}
