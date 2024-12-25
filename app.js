@@ -1,9 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const os = require('os');
 const mongoose = require('./db');
 
 const app = express();
-
+console.log(os.platform())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 

@@ -2,6 +2,7 @@ const Fotografias = require('../models/fotografia')
 const thumb= require('node-thumbnail').thumb;
 const path = require('path')
 const fs= require('fs')
+const os = require('os');
 
 const create = async (req, res) => {
     try {
@@ -61,11 +62,22 @@ const uploadFotografia = async (req, res) => {
         if(req.files) {
             const file_path=req.files.foto.path
             console.log(req.files)
-            const file_split= file_path.split('\\')
+
+            let file_split = ''
+            if(os.platform() == 'linux') {
+                file_split = file_path.split('/');
+            } else {
+                file_split = file_path.split('\\')
+            }
+
+
+            console.log("11"+file_split);
             const file_name = file_split[2]
+            console.log(file_name)
             const ext_split= file_name.split('\.')
             const file_ext= ext_split[1]
-            if(file_ext=='jpg'){
+            console.log(file_ext)
+            if(file_ext=='jpg' || file_ext=='jpeg'){
                 let fotografia={}
                 const objetoBD = await Fotografias.findById(id)
                 if(!objetoBD) {
