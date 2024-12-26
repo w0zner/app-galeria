@@ -22,4 +22,18 @@ const createToken = (usuario) => {
     }
 }
 
-module.exports = {createToken}
+const verifyUserToken = (token) => {
+    try {
+        console.log(token)
+        const secret = process.env.TOKEN_SECRET || ''
+        let split_token = token.split(' ')[1]  
+
+        let payload = nJwt.verify(split_token, secret)   
+        return payload.body.sub
+    } catch (error) {
+        console.error(error)
+        console.error('Error al verificar el token')
+    }
+}
+
+module.exports = {createToken, verifyUserToken}

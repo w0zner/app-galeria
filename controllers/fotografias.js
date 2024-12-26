@@ -1,11 +1,13 @@
 const Fotografias = require('../models/fotografia')
 const thumb= require('node-thumbnail').thumb;
 const path = require('path')
+const jwt = require('../utils/jwt')
 const fs= require('fs')
 const os = require('os');
 
 const create = async (req, res) => {
     try {
+        console.log(jwt.verifyUserToken(req.headers.authorization))
         const foto = new Fotografias(req.body)
         await foto.save()
 
