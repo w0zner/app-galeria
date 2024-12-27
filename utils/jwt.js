@@ -9,7 +9,14 @@ const createToken = (usuario) => {
             rol:usuario.rol
         }
     
-        let jwt= nJwt.create(params, process.env.TOKEN_SECRET || '')
+        const secret = process.env.TOKEN_SECRET || ''
+
+        if (!secret) {
+            console.error('Clave secreta no configurada.');
+            return null;
+        }
+
+        let jwt= nJwt.create(params, secret)
         let time = new Date()
         time.setMinutes(time.getMinutes() + 30); // Sumar 15 minutos
         //time.setHours(time.getHours() + 1)
@@ -25,13 +32,20 @@ const createToken = (usuario) => {
 const verifyUserToken = (token) => {
     try {
         const secret = process.env.TOKEN_SECRET || ''
+
+        if (!secret) {
+            console.error('Clave secreta no configurada.');
+            return null;
+        }
+
         let split_token = token.split(' ')[1]  
 
-        let payload = nJwt.verify(split_token, secret)   
+        const payload = nJwt.verify(split_token, secret)   
         return payload.body.sub
     } catch (error) {
         console.error(error)
-        console.error('Error al verificar el token')
+        console.log('Error al verificar el token')
+        return null;
     }
 }
 

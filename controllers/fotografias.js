@@ -1,4 +1,5 @@
 const Fotografias = require('../models/fotografia')
+const mongoose = require('mongoose');
 const thumb= require('node-thumbnail').thumb;
 const path = require('path')
 const jwt = require('../utils/jwt')
@@ -9,7 +10,7 @@ const create = async (req, res) => {
     try {
         const userId = jwt.verifyUserToken(req.headers.authorization)
         const foto = new Fotografias(req.body)
-        
+
         foto.usuario_creacion = userId
         await foto.save()
 
@@ -32,7 +33,7 @@ const update = async (req, res) => {
 
         if(!existeFoto) {
             return res.status(404).json({
-                message: 'No existe el usuario buscado'
+                message: 'No existe el registro buscado'
             })
         }
 
@@ -189,7 +190,7 @@ const getAll = async (req, res) => {
 const getAllAdmin = async (req, res) => {
     try {
         const fotografias = await Fotografias.find({}, 'nombre descripcion imagen numero autor activo usuario_creacion createdAt updatedAt').sort({numero: 1})
-        console.log(fotografias)
+
         res.status(200).send({
             fotografias
         })
@@ -201,4 +202,27 @@ const getAllAdmin = async (req, res) => {
     }
 }
 
-module.exports = {create, update, uploadFotografia, getFotografia,getAll, getAllAdmin}
+const getById = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send({ message: 'ID del registro inválido' });
+        }
+
+        const fotografia = await Fotografias.findById(id)
+
+        if(!fotografia) {
+            return res.status(404).json({message: 'No existe el registro buscado'})
+        }
+
+        res.status(200).send({fotografia})
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado'
+        })
+    }
+}
+
+module.exports = {create, update, uploadFotografia, getFotografia,getAll, getAllAdmin, getById}
