@@ -24,7 +24,6 @@ const createToken = (usuario) => {
 
 const verifyUserToken = (token) => {
     try {
-        console.log(token)
         const secret = process.env.TOKEN_SECRET || ''
         let split_token = token.split(' ')[1]  
 

@@ -7,8 +7,10 @@ const os = require('os');
 
 const create = async (req, res) => {
     try {
-        console.log(jwt.verifyUserToken(req.headers.authorization))
+        const userId = jwt.verifyUserToken(req.headers.authorization)
         const foto = new Fotografias(req.body)
+        
+        foto.usuario_creacion = userId
         await foto.save()
 
         res.status(201).json({

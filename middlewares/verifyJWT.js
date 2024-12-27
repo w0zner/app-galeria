@@ -7,13 +7,19 @@ function verifyAuth(req, res, next) {
     }
 
     const secret = process.env.TOKEN_SECRET || ''
-    let token = req.headers.authorization?.split(' ')[1]   //.replace(/['"]+/g, '')
-    //console.log(token)
+    let token = req.headers.authorization?.split(' ')[1] 
+
     let payload = nJwt.verify(token, secret, (err, verifiedJwt) => {
         if(err) {
-            console.error(err)
-            res.status(401).send({message: 'Acceso no autorizado.'})
+            if (err.message.includes('expired')) {
+                console.error(err)
+                res.status(401).send({message: 'El token ha expirado.'});
+            } else {
+                console.error(err)
+                res.status(401).send({message: 'Acceso no autorizado.'})
+            }
         } else {
+            console.log(verifiedJwt.body)
             next()
         }
     })
