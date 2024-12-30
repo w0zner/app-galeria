@@ -36,15 +36,16 @@ const update = async (req, res) => {
                 message: 'No existe el registro buscado'
             })
         }
-
+         console.log(req.body?.nombre)
         if(existeFoto.nombre != req.body?.nombre) {
-            const existeNombre = await Fotografias.findOne({nombre})
+            console.log(12)
+            const existeNombre = await Fotografias.exists({ nombre });
             if(existeNombre) {
                 return res.status(400).json({
                     message: 'Ya existe un registro con ese nombre'
                 })
             }
-        }
+        } 
 
         const fotoActualizada = await Fotografias.findByIdAndUpdate(id, req.body, {new: true})
 
@@ -54,9 +55,15 @@ const update = async (req, res) => {
         })
     } catch (error) {
         console.error(error)
-        res.status(500).json({
-            message: 'Error inesperado'
-        })
+        console.error(error?.code)
+        if(error?.code==11000)
+            res.status(400).json({
+                message: 'Registro con campo ya existente'
+            })
+        else
+            res.status(500).json({
+                message: 'Error inesperado'
+            })
     }
 }
 
