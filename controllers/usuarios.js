@@ -32,6 +32,45 @@ const create = async (req, res) => {
     }
 }
 
+const update = async(req, res) => {
+    try {
+        const id = req.params.id
+        const userId = jwt.verifyUserToken(req.headers.authorization)
+
+        if(userId == id) {
+            const existeUsuario = await Usuario.findById(id)
+    
+            if(!existeUsuario) {
+                return res.status(404).json({
+                    message: 'Usuario no existente'
+                })
+            }
+    
+            const salt = bcrypt.genSaltSync()
+            req.body.password = bcrypt.hashSync(req.body.password, salt)
+    
+            req.body.rol=existeUsuario.rol;
+            req.body.activo=existeUsuario.activo;
+    
+            const usuarioActualizado = await Usuario.findByIdAndUpdate(id, req.body, {new: true})
+    
+            res.status(201).json({
+                message: 'Usuario Actualizado',
+                usuario: usuarioActualizado
+            })
+        } else {
+            res.status(403).json({
+                message: 'No tiene permiso para actualizar este registro.'
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado',
+        })
+    }
+}
+
 const login = async (req, res) => {
     try {
         const {usuario, password} = req.body
@@ -130,4 +169,4 @@ const list = (req, res) => {
     }
 }
 
-module.exports = {create, list, login, refreshToken}
+module.exports = {create, list, login, refreshToken, update}

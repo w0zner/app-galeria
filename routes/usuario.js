@@ -7,5 +7,6 @@ router.post('/login', usuario.login);
 router.post('/refresh-token', md_auth.verifyAuth, usuario.refreshToken);
 router.get('/listar', md_auth.verifyAuth, usuario.list);
 router.post('/crear', usuario.create);
+router.post('/actualizar/:id', md_auth.verifyAuth, usuario.update);
 
 module.exports = router;
