@@ -1,6 +1,8 @@
 const Usuario = require('../models/usuario')
 const jwt = require('../utils/jwt')
 const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose');
+
 
 const create = async (req, res) => {
     const {usuario, password} = req.body
@@ -34,6 +36,7 @@ const create = async (req, res) => {
 
 const update = async(req, res) => {
     try {
+        console.log(req.params.id)
         const id = req.params.id
         const userId = jwt.verifyUserToken(req.headers.authorization)
 
@@ -45,10 +48,10 @@ const update = async(req, res) => {
                     message: 'Usuario no existente'
                 })
             }
-    
+            console.log(req.params.password)
             const salt = bcrypt.genSaltSync()
             req.body.password = bcrypt.hashSync(req.body.password, salt)
-    
+            console.log(req.params.password)
             req.body.rol=existeUsuario.rol;
             req.body.activo=existeUsuario.activo;
     
@@ -169,4 +172,27 @@ const list = (req, res) => {
     }
 }
 
-module.exports = {create, list, login, refreshToken, update}
+const getUserById = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send({ message: 'ID del registro inválido' });
+        }
+
+        const usuario = await Usuario.findById(id)
+
+        if(!usuario) {
+            return res.status(404).json({message: 'No existe el usuario buscado'})
+        }
+
+        res.status(200).send({usuario})
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: 'Error inesperado'
+        })
+    }
+}
+
+module.exports = {create, list, login, refreshToken, update, getUserById}
